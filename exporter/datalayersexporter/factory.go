@@ -33,10 +33,10 @@ func createDefaultConfig() component.Config {
 		ClientConfig: confighttp.ClientConfig{
 			Timeout: 5 * time.Second,
 			Headers: map[string]configopaque.String{
-				"User-Agent": "OpenTelemetry -> Influx",
+				"User-Agent": "OpenTelemetry -> Datalayers",
 			},
 		},
-		QueueSettings: exporterhelper.NewDefaultQueueConfig(),
+		QueueSettings: exporterhelper.NewDefaultQueueSettings(),
 		BackOffConfig: configretry.NewDefaultBackOffConfig(),
 		// MetricsSchema:  common.MetricsSchemaTelegrafPrometheusV1.String(),
 		Trace: Trace{

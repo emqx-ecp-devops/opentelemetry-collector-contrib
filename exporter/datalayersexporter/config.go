@@ -28,12 +28,13 @@ type Trace struct {
 	SpanDimensions []string `mapstructure:"span_dimensions"`
 	// SpanFields are span attributes to be used as line protocol fields.
 	// SpanFields can be empty.
-	SpanFields []string      `mapstructure:"span_fields"`
-	Custom     []CustomTrace `mapstructure:"custom"`
+	SpanFields     []string      `mapstructure:"span_fields"`
+	CustomKeyScope string        `mapstructure:"custom_key_scope"`
+	Custom         []CustomTrace `mapstructure:"custom"`
 }
 
 type CustomTrace struct {
-	Key            string   `mapstructure:"key"`
+	Key            []string `mapstructure:"key"`
 	Table          string   `mapstructure:"table"`
 	SpanDimensions []string `mapstructure:"span_dimensions"`
 	SpanFields     []string `mapstructure:"span_fields"`
@@ -92,35 +93,61 @@ func (cfg *Config) Validate() error {
 		return fmt.Errorf("duplicate span fields(s) configured: %s",
 			strings.Join(maps.Keys(duplicateFields), ","))
 	}
-
-	for _, custom := range cfg.Trace.Custom {
-		customSpanTags := make(map[string]struct{}, len(cfg.Trace.SpanDimensions))
-		customSpanFields := make(map[string]struct{})
-		duplicateTags = make(map[string]struct{})
-		for _, k := range custom.SpanDimensions {
-			if _, found := customSpanTags[k]; found {
-				duplicateTags[k] = struct{}{}
-			} else {
-				customSpanTags[k] = struct{}{}
+	if len(cfg.Trace.Custom) > 0 {
+		// validate custom_key_scope
+		// valid values: name, kind, parent_span_id, status_code, context.trace_id, context.span_id, attributes.xxx
+		keyScope := cfg.Trace.CustomKeyScope
+		switch keyScope {
+		case "name", "kind", "parent_span_id", "status_code", "context.trace_id", "context.span_id":
+		default:
+			if !strings.HasPrefix(keyScope, "attributes.") {
+				return fmt.Errorf("invalid custom key scope %s, valid scope values are: name, kind, parent_span_id, status_code, context.trace_id, context.span_id, attributes.xxx", keyScope)
 			}
 		}
-		if len(duplicateTags) > 0 {
-			return fmt.Errorf("duplicate custom span dimension(s) configured: %s",
-				strings.Join(maps.Keys(duplicateTags), ","))
-		}
-		duplicateFields := make(map[string]struct{})
-		for _, k := range custom.SpanFields {
-			if _, found := customSpanFields[k]; found {
-				duplicateFields[k] = struct{}{}
-			} else {
-				customSpanFields[k] = struct{}{}
+
+		// validate tags & fields
+		customKeys := make(map[string]struct{})
+		duplicateKeys := make(map[string]struct{})
+		for _, custom := range cfg.Trace.Custom {
+			keyArray := custom.Key
+			for _, k := range keyArray {
+				if _, found := customKeys[k]; found {
+					duplicateKeys[k] = struct{}{}
+				} else {
+					customKeys[k] = struct{}{}
+				}
+			}
+			customSpanTags := make(map[string]struct{}, len(cfg.Trace.SpanDimensions))
+			customSpanFields := make(map[string]struct{})
+			duplicateTags = make(map[string]struct{})
+			for _, k := range custom.SpanDimensions {
+				if _, found := customSpanTags[k]; found {
+					duplicateTags[k] = struct{}{}
+				} else {
+					customSpanTags[k] = struct{}{}
+				}
+			}
+			if len(duplicateTags) > 0 {
+				return fmt.Errorf("duplicate custom span dimension(s) configured: %s",
+					strings.Join(maps.Keys(duplicateTags), ","))
+			}
+			duplicateFields := make(map[string]struct{})
+			for _, k := range custom.SpanFields {
+				if _, found := customSpanFields[k]; found {
+					duplicateFields[k] = struct{}{}
+				} else {
+					customSpanFields[k] = struct{}{}
+				}
+			}
+			if len(duplicateFields) > 0 {
+				return fmt.Errorf("duplicate custom span fields(s) configured: %s",
+					strings.Join(maps.Keys(duplicateFields), ","))
 			}
 		}
-		if len(duplicateFields) > 0 {
-			return fmt.Errorf("duplicate custom span fields(s) configured: %s",
-				strings.Join(maps.Keys(duplicateFields), ","))
+		if len(duplicateKeys) > 0 {
+			return fmt.Errorf("duplicate custom key configured: %s",
+				strings.Join(maps.Keys(duplicateKeys), ","))
 		}
-
 	}
 
 	return nil

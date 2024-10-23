@@ -8,8 +8,8 @@ github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ3
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/emqx-ecp-devops/influxdb-observability/otel2influx v0.0.0-20241022091345-9e1ac8f66962 h1:m5+TsvVMbrSLYNytZygJl2EIEC9UPux8dA8EZjNjT3Q=
-github.com/emqx-ecp-devops/influxdb-observability/otel2influx v0.0.0-20241022091345-9e1ac8f66962/go.mod h1:kDf6mhIO6hp4tD1KzFduipD9sFapv7FsCDDbPeEACPw=
+github.com/emqx-ecp-devops/influxdb-observability/otel2influx v0.0.0-20241023083454-b7ded9c74748 h1:y5YSKH8fSU+vCPLZMbEbFwGiFeF57984qrNXc4bfEq8=
+github.com/emqx-ecp-devops/influxdb-observability/otel2influx v0.0.0-20241023083454-b7ded9c74748/go.mod h1:kDf6mhIO6hp4tD1KzFduipD9sFapv7FsCDDbPeEACPw=
 github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
 github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/frankban/quicktest v1.11.0/go.mod h1:K+q6oSqb0W0Ininfk863uOk1lMy69l/P6txr3mVT54s=

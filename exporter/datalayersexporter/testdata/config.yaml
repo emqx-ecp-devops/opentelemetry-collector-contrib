@@ -9,8 +9,9 @@ datalayers/override-config:
     table: spans
     span_dimensions:
     - service.name
-    - trace.id
+    - trace_id
     span_fields: []
+    custom_key_scope: name
     custom:
     - key: emqx
       table: emqx

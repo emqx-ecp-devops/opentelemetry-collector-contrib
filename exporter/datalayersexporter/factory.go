@@ -73,6 +73,7 @@ func createTraceExporter(
 		SpanDimensions: trace.SpanDimensions,
 		SpanFields:     trace.SpanFields,
 	}
+	expConfig.CustomKeyScope = cfg.Trace.CustomKeyScope
 	customs := cfg.Trace.Custom
 	expConfig.CustomTraces = make(map[string]otel2influx.Trace, len(customs))
 	for _, custom := range customs {
@@ -81,7 +82,9 @@ func createTraceExporter(
 			SpanDimensions: custom.SpanDimensions,
 			SpanFields:     custom.SpanFields,
 		}
-		expConfig.CustomTraces[custom.Key] = customTrace
+		for _, key := range custom.Key {
+			expConfig.CustomTraces[key] = customTrace
+		}
 	}
 	exp, err := otel2influx.NewOtelTracesToLineProtocol(expConfig)
 	if err != nil {

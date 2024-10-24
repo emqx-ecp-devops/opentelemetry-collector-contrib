@@ -147,8 +147,6 @@ func (b *influxHTTPWriterBatch) EnqueuePoint(ctx context.Context, measurement st
 
 	b.payloadLines++
 	if b.payloadLines >= b.payloadMaxLines || len(b.encoder.Bytes()) >= b.payloadMaxBytes {
-		fmt.Println("!!! lines:" + string(b.encoder.Bytes()))
-		// b.logger.Debug("!!!lines: " + string(b.encoder.Bytes()))
 		if err := b.WriteBatch(ctx); err != nil {
 			return err
 		}
@@ -159,8 +157,7 @@ func (b *influxHTTPWriterBatch) EnqueuePoint(ctx context.Context, measurement st
 
 // WriteBatch sends the internal line protocol buffer to InfluxDB.
 func (b *influxHTTPWriterBatch) WriteBatch(ctx context.Context) error {
-	fmt.Println("!!! write batch")
-	b.logger.Debug("!!! write batch 1")
+	b.logger.Debug("!!!write batch: " + string(b.encoder.Bytes()))
 	if b.encoder == nil {
 		return nil
 	}

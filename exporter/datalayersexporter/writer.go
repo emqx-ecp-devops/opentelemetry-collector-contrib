@@ -159,6 +159,7 @@ func (b *influxHTTPWriterBatch) EnqueuePoint(ctx context.Context, measurement st
 
 // WriteBatch sends the internal line protocol buffer to InfluxDB.
 func (b *influxHTTPWriterBatch) WriteBatch(ctx context.Context) error {
+	fmt.Println("!!! write batch")
 	if b.encoder == nil {
 		return nil
 	}

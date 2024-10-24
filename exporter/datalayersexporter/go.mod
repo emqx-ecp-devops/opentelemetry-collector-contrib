@@ -3,7 +3,7 @@ module github.com/emqx-ecp-devops/opentelemetry-collector-contrib/exporter/datal
 go 1.22.0
 
 require (
-	github.com/emqx-ecp-devops/influxdb-observability/otel2influx v0.0.0-20241023083454-b7ded9c74748
+	github.com/emqx-ecp-devops/influxdb-observability/otel2influx v0.0.0-20241024062127-5d757e91d118
 	github.com/influxdata/influxdb-observability/common v0.5.12
 	github.com/influxdata/line-protocol/v2 v2.2.1
 	github.com/stretchr/testify v1.9.0

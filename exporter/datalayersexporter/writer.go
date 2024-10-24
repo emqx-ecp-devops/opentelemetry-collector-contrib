@@ -156,7 +156,7 @@ func (b *influxHTTPWriterBatch) EnqueuePoint(ctx context.Context, measurement st
 
 // WriteBatch sends the internal line protocol buffer to InfluxDB.
 func (b *influxHTTPWriterBatch) WriteBatch(ctx context.Context) error {
-	b.logger.Debug("!!!write batch: " + string(b.encoder.Bytes()))
+	b.logger.Debug(fmt.Sprintf("batch content: %s", string(b.encoder.Bytes())))
 	if b.encoder == nil {
 		return nil
 	}
@@ -209,7 +209,7 @@ func (b *influxHTTPWriterBatch) optimizeTags(m map[string]string) []tag {
 		case k == "":
 			b.logger.Debug("empty tag key")
 		case v == "":
-			b.logger.Debug("empty tag value", "key", k)
+			b.logger.Debug(fmt.Sprintf("empty tag value, key = %s", k))
 		default:
 			tags = append(tags, tag{k, v})
 		}
@@ -226,7 +226,7 @@ func (b *influxHTTPWriterBatch) convertFields(m map[string]any) (fields map[stri
 		if k == "" {
 			b.logger.Debug("empty field key")
 		} else if lpv, ok := lineprotocol.NewValue(v); !ok {
-			b.logger.Debug("invalid field value", "key", k, "value", v)
+			b.logger.Debug(fmt.Sprintf("invalid field value, key = %s, value = %v", k, v))
 		} else {
 			fields[k] = lpv
 		}

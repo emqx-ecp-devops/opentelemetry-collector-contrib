@@ -123,7 +123,6 @@ func newInfluxHTTPWriterBatch(w *influxHTTPWriter) *influxHTTPWriterBatch {
 // to the internal line protocol buffer.
 // If the buffer is full, it will be flushed by calling WriteBatch.
 func (b *influxHTTPWriterBatch) EnqueuePoint(ctx context.Context, measurement string, tags map[string]string, fields map[string]any, ts time.Time, _ common.InfluxMetricValueType) error {
-	fmt.Println("!!! enqueue point")
 	if b.encoder == nil {
 		b.encoder = b.encoderPool.Get().(*lineprotocol.Encoder)
 	}

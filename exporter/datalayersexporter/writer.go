@@ -146,6 +146,7 @@ func (b *influxHTTPWriterBatch) EnqueuePoint(ctx context.Context, measurement st
 
 	b.payloadLines++
 	if b.payloadLines >= b.payloadMaxLines || len(b.encoder.Bytes()) >= b.payloadMaxBytes {
+		b.logger.Debug("!!!lines: " + string(b.encoder.Bytes()))
 		if err := b.WriteBatch(ctx); err != nil {
 			return err
 		}

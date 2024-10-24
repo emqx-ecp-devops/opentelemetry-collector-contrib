@@ -13,14 +13,17 @@ datalayers/override-config:
     span_fields: []
     custom_key_scope: name
     custom:
-    - key: emqx
+    - key:
+      - emqx
+      - neuronex
       table: emqx
       span_dimensions:
       - service.name
       - client_id
       span_fields:
       - attr1
-    - key: ecp
+    - key: 
+      - ecp
       table: ecp
       span_dimensions:
       - service.name

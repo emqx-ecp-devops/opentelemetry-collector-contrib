@@ -43,3 +43,4 @@ integration-coverage.html
 go.work*
 
 /result
+.history/

@@ -5,10 +5,12 @@ package datalayersexporter
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/emqx-ecp-devops/influxdb-observability/otel2influx"
 	"github.com/emqx-ecp-devops/opentelemetry-collector-contrib/exporter/datalayersexporter/internal/metadata"
+	"github.com/influxdata/influxdb-observability/common"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/confighttp"
 	"go.opentelemetry.io/collector/config/configopaque"
@@ -23,7 +25,7 @@ func NewFactory() exporter.Factory {
 		metadata.Type,
 		createDefaultConfig,
 		exporter.WithTraces(createTraceExporter, metadata.TracesStability),
-		// exporter.WithMetrics(createMetricsExporter, metadata.MetricsStability),
+		exporter.WithMetrics(createMetricsExporter, metadata.MetricsStability),
 		// exporter.WithLogs(createLogsExporter, metadata.LogsStability),
 	)
 }
@@ -38,7 +40,7 @@ func createDefaultConfig() component.Config {
 		},
 		QueueSettings: exporterhelper.NewDefaultQueueSettings(),
 		BackOffConfig: configretry.NewDefaultBackOffConfig(),
-		// MetricsSchema:  common.MetricsSchemaTelegrafPrometheusV1.String(),
+		MetricsSchema: common.MetricsSchemaTelegrafPrometheusV1.String(),
 		Trace: Trace{
 			SpanDimensions: otel2influx.DefaultOtelTracesToLineProtocolConfig().GlobalTrace.SpanDimensions,
 		},
@@ -102,40 +104,40 @@ func createTraceExporter(
 	)
 }
 
-// func createMetricsExporter(ctx context.Context, set exporter.Settings, config component.Config) (exporter.Metrics, error) {
-// 	cfg := config.(*Config)
+func createMetricsExporter(ctx context.Context, set exporter.Settings, config component.Config) (exporter.Metrics, error) {
+	cfg := config.(*Config)
 
-// 	logger := newZapInfluxLogger(set.Logger)
+	logger := newZapInfluxLogger(set.Logger)
 
-// 	writer, err := newInfluxHTTPWriter(logger, cfg, set.TelemetrySettings)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	writer, err := newInfluxHTTPWriter(logger, cfg, set.TelemetrySettings)
+	if err != nil {
+		return nil, err
+	}
 
-// 	schema, found := common.MetricsSchemata[cfg.MetricsSchema]
-// 	if !found {
-// 		return nil, fmt.Errorf("schema '%s' not recognized", cfg.MetricsSchema)
-// 	}
+	schema, found := common.MetricsSchemata[cfg.MetricsSchema]
+	if !found {
+		return nil, fmt.Errorf("schema '%s' not recognized", cfg.MetricsSchema)
+	}
 
-// 	expConfig := otel2influx.DefaultOtelMetricsToLineProtocolConfig()
-// 	expConfig.Logger = logger
-// 	expConfig.Writer = writer
-// 	expConfig.Schema = schema
-// 	exp, err := otel2influx.NewOtelMetricsToLineProtocol(expConfig)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	expConfig := otel2influx.DefaultOtelMetricsToLineProtocolConfig()
+	expConfig.Logger = logger
+	expConfig.Writer = writer
+	expConfig.Schema = schema
+	exp, err := otel2influx.NewOtelMetricsToLineProtocol(expConfig)
+	if err != nil {
+		return nil, err
+	}
 
-// 	return exporterhelper.NewMetricsExporter(
-// 		ctx,
-// 		set,
-// 		cfg,
-// 		exp.WriteMetrics,
-// 		exporterhelper.WithQueue(cfg.QueueSettings),
-// 		exporterhelper.WithRetry(cfg.BackOffConfig),
-// 		exporterhelper.WithStart(writer.Start),
-// 	)
-// }
+	return exporterhelper.NewMetricsExporter(
+		ctx,
+		set,
+		cfg,
+		exp.WriteMetrics,
+		exporterhelper.WithQueue(cfg.QueueSettings),
+		exporterhelper.WithRetry(cfg.BackOffConfig),
+		exporterhelper.WithStart(writer.Start),
+	)
+}
 
 // func createLogsExporter(ctx context.Context, set exporter.Settings, config component.Config) (exporter.Logs, error) {
 // 	cfg := config.(*Config)

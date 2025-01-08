@@ -64,6 +64,12 @@ type Config struct {
 	PayloadMaxLines int `mapstructure:"payload_max_lines"`
 	// PayloadMaxBytes is the maximum number of line protocol bytes to POST in a single request.
 	PayloadMaxBytes int `mapstructure:"payload_max_bytes"`
+
+	// MetricsSchema indicates the metrics schema to emit to line protocol.
+	// Options:
+	// - telegraf-prometheus-v1
+	// - telegraf-prometheus-v2
+	MetricsSchema string `mapstructure:"metrics_schema"`
 }
 
 func (cfg *Config) Validate() error {
